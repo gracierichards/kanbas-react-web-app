@@ -6,7 +6,7 @@ export default function Dashboard() {
       <h2 id="wd-dashboard-published">Published Courses (7)</h2> <hr />
       <div id="wd-dashboard-courses">
         <div className="wd-dashboard-course">
-          <img src="/images/reactjs.jpeg" width={200} />
+          <img src="/images/reactjs.jpeg" width={200} alt="React logo"/>
           <div>
             <Link className="wd-dashboard-course-link"
               to="/Kanbas/Courses/1234/Home">
@@ -19,7 +19,7 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="wd-dashboard-course">
-            <img src="/images/PDP_logo.gif" width={200} />
+            <img src="/images/PDP_logo.gif" width={200} alt="PDP logo"/>
             <div>
                 <Link className="wd-dashboard-course-link"
                 to="/Kanbas/Courses/5010/Home">
@@ -32,7 +32,7 @@ export default function Dashboard() {
             </div>
         </div>
         <div className="wd-dashboard-course">
-        <img src="/images/Database logo.png" width={200} />
+        <img src="/images/Database logo.png" width={200} alt="Commonly used shape used to represent databases"/>
             <div>
                 <Link className="wd-dashboard-course-link"
                 to="/Kanbas/Courses/5200/Home">
@@ -45,7 +45,7 @@ export default function Dashboard() {
             </div>
         </div>
         <div className="wd-dashboard-course">
-        <img src="/images/Unity3d icon.jpg" width={200} />
+        <img src="/images/Unity3d icon.jpg" width={200} alt="Unity icon overlaid over game scenery"/>
             <div>
                 <Link className="wd-dashboard-course-link"
                 to="/Kanbas/Courses/5540/Home">
@@ -58,7 +58,7 @@ export default function Dashboard() {
             </div>
         </div>
         <div className="wd-dashboard-course">
-        <img src="/images/Algorithms logo.png" width={200} />
+        <img src="/images/Algorithms logo.png" width={200} alt="A tree spelling out algorithms"/>
             <div>
                 <Link className="wd-dashboard-course-link"
                 to="/Kanbas/Courses/5800/Home">
@@ -71,7 +71,7 @@ export default function Dashboard() {
             </div>
         </div>
         <div className="wd-dashboard-course">
-        <img src="/images/Internet image.jpeg" width={200} />
+        <img src="/images/Internet image.jpeg" width={200} alt="The Earth"/>
             <div>
                 <Link className="wd-dashboard-course-link"
                 to="/Kanbas/Courses/5610/Home">
@@ -84,7 +84,7 @@ export default function Dashboard() {
             </div>
         </div>
         <div className="wd-dashboard-course">
-        <img src="/images/Software team image.jpeg" width={200} />
+        <img src="/images/Software team image.jpeg" width={200} alt="Clipart of three people with laptops working together"/>
             <div>
                 <Link className="wd-dashboard-course-link"
                 to="/Kanbas/Courses/5500/Home">
