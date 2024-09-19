@@ -6,6 +6,9 @@ import Lab3 from "./Lab3";
 export default function Labs() {
   return (
     <div id="wd-labs">
+      <p>Gracie Richards</p>
+      <p>Section 2</p>
+      <p><a id="wd-github" href="https://github.com/gracierichards/kanbas-react-web-app">Code repository on GitHub</a></p>
       <h1>Labs</h1>
       <TOC />
       <Routes>
