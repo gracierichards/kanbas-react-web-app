@@ -10,18 +10,13 @@ export default function AssignmentEditor() {
     <div id="wd-assignments-editor">
       <label htmlFor="wd-name" className="form-label"><h6>Assignment Name</h6></label>
       <input id="wd-name" className="form-control" type="text" value={this_assignment && this_assignment.title}/><br /><br />
-      <p id="wd-description" className="assignment-editor-border px-3 py-2">The assignment is available online<br/>
-        Submit a link to the landing page of your Web application running on Netlify.<br/>
-        The landing page should include the following:<br/>- Your full name and section<br/>
-        - Links to each of the lab assignments<br/>- Link to the Kanbas application<br/>
-        - Links to all relevant source code repositories<br/>
-        The Kanbas application should include a link to navigate back to the landing page.</p>
+      <p id="wd-description" className="assignment-editor-border px-3 py-2">{this_assignment && this_assignment.description && this_assignment.description.split("\n").map((str) => (<div>{str}<br /></div>))}</p>
       <div className="row justify-content-end">
         <div className="col-2 mb-4">
           <label htmlFor="wd-points" className="form-label float-end">Points</label>
         </div>
         <div className="col-8 mb-4">
-          <input id="wd-points" className="form-control"/>
+          <input id="wd-points" className="form-control" value={this_assignment && this_assignment.points}/>
         </div>
       </div>
       <div className="row justify-content-end">
@@ -82,11 +77,13 @@ export default function AssignmentEditor() {
             <label htmlFor="wd-assign" className="form-label"><strong>Assign to</strong></label> <br />
             <input id="wd-assign" value="Everyone" className="form-control"/><br />
             <label htmlFor="wd-due-date" className="form-label"><strong>Due</strong></label> <br />
-            <input type="date" id="wd-due-date" className="input-group date"/><br />
+            <input type="date" id="wd-due-date" className="input-group date" 
+              defaultValue={this_assignment && new Date(this_assignment.dueDate + ", 2024").toISOString().slice(0, 10)}/><br />
             <div className="row">
               <div className="col mb-4">
                 <label htmlFor="wd-available-from" className="form-label"><strong>Available from</strong></label><br />
-                <input type="date" id="wd-available-from" className="input-group date"/>
+                <input type="date" id="wd-available-from" className="input-group date"
+                  defaultValue={this_assignment && new Date(this_assignment.dateAvailable + ", 2024").toISOString().slice(0, 10)}/>
               </div>
               <div className="col mb-4">
                 <label htmlFor="wd-available-until" className="form-label"><strong>Until</strong></label> <br />
