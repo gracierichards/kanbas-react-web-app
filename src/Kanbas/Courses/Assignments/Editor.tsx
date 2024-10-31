@@ -1,22 +1,44 @@
 import { useParams } from "react-router";
-import * as db from "../../Database";
-import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {addAssignment, updateAssignment} from "./reducer";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function AssignmentEditor() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { pathname } = useLocation();
   const { cid, aid } = useParams();
-  const assignments = db.assignments;
-  const this_assignment = assignments.find((assignment) => assignment._id == aid);
+  const { assignments } = useSelector((state: any) => state.assignmentReducer);
+  let this_assignment = assignments.find((assignment : {_id: string}) => assignment._id === aid);
+  if (!this_assignment) {
+    this_assignment = {
+      _id: "",
+      title: "",
+      course: cid,
+      dateAvailable: "",
+      timeAvailable: "",
+      dueDate: "",
+      dueTime: "",
+      points: 0,
+      description: ""
+    }
+  }
+  //const {this_assignment} = useSelector((state: any) => state.assignmentReducer);
   return (
     <div id="wd-assignments-editor">
       <label htmlFor="wd-name" className="form-label"><h6>Assignment Name</h6></label>
-      <input id="wd-name" className="form-control" type="text" value={this_assignment && this_assignment.title}/><br /><br />
-      <p id="wd-description" className="assignment-editor-border px-3 py-2">{this_assignment && this_assignment.description && this_assignment.description.split("\n").map((str) => (<div>{str}<br /></div>))}</p>
+      <input id="wd-name" className="form-control" type="text" defaultValue={this_assignment && this_assignment.title}
+        onChange={(e) => (this_assignment = {...this_assignment, title: e.target.value})}/><br />
+      <textarea id="wd-description" className="form-control" rows={10}
+        defaultValue={this_assignment && this_assignment.description}
+        onChange={(e) => this_assignment = {...this_assignment, description: e.target.value}}/><br />
       <div className="row justify-content-end">
         <div className="col-2 mb-4">
           <label htmlFor="wd-points" className="form-label float-end">Points</label>
         </div>
         <div className="col-8 mb-4">
-          <input id="wd-points" className="form-control" value={this_assignment && this_assignment.points}/>
+          <input id="wd-points" className="form-control" defaultValue={this_assignment && this_assignment.points} 
+          type="number" onChange={(e) => this_assignment = {...this_assignment, points: +e.target.value}}/>
         </div>
       </div>
       <div className="row justify-content-end">
@@ -78,23 +100,43 @@ export default function AssignmentEditor() {
             <input id="wd-assign" value="Everyone" className="form-control"/><br />
             <label htmlFor="wd-due-date" className="form-label"><strong>Due</strong></label> <br />
             <input type="date" id="wd-due-date" className="input-group date" 
-              defaultValue={this_assignment && new Date(this_assignment.dueDate + ", 2024").toISOString().slice(0, 10)}/><br />
+              defaultValue={this_assignment && 
+                (this_assignment.dueDate.includes('-') ? this_assignment.dueDate : 
+                new Date(this_assignment.dueDate + ", 2024").toISOString().slice(0, 10)) }
+              onChange={(e) => {
+                console.log(e.target.value);
+                this_assignment = {...this_assignment, dueDate: e.target.value}}}/><br />
             <div className="row">
               <div className="col mb-4">
                 <label htmlFor="wd-available-from" className="form-label"><strong>Available from</strong></label><br />
                 <input type="date" id="wd-available-from" className="input-group date"
-                  defaultValue={this_assignment && new Date(this_assignment.dateAvailable + ", 2024").toISOString().slice(0, 10)}/>
+                  defaultValue={this_assignment && 
+                    (this_assignment.dateAvailable.includes('-') ? this_assignment.dateAvailable : 
+                    new Date(this_assignment.dateAvailable + ", 2024").toISOString().slice(0, 10))}
+                  onChange={(e) => this_assignment = {...this_assignment, dateAvailable: e.target.value}}/>
               </div>
               <div className="col mb-4">
                 <label htmlFor="wd-available-until" className="form-label"><strong>Until</strong></label> <br />
-                <input type="date" id="wd-available-until" className="input-group date"/>
+                <input type="date" id="wd-available-until" className="input-group date"
+                defaultValue={this_assignment && this_assignment.availableUntil && this_assignment.availableUntil}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  this_assignment = {...this_assignment, availableUntil: e.target.value}}}/>
               </div>
             </div>
           </p>
         </div>
       </div>
       <hr />
-      <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-lg btn-danger me-1 float-end"> Save </Link>
+      <button className="btn btn-lg btn-danger me-1 float-end"
+        onClick={() => {
+          if (pathname.includes("/@")) {
+            dispatch(addAssignment(this_assignment));
+          } else {
+            dispatch(updateAssignment(this_assignment));
+          }
+          navigate(`/Kanbas/Courses/${cid}/Assignments`);
+        }}>Save</button>
       <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-lg btn-secondary me-1 float-end"> Cancel </Link>
     </div>
   );}

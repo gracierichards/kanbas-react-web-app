@@ -1,10 +1,13 @@
 import { IoEllipsisVertical } from "react-icons/io5";
-import { BsPlus } from "react-icons/bs";
-export default function AssignmentControlButtons() {
+import { FaTrash } from "react-icons/fa";
+import GreenCheckmark from "../Modules/GreenCheckmark";
+import { useDispatch } from "react-redux";
+export default function AssignmentControlButtons({id, deleteFunction} : {id: string, deleteFunction : any}) {
+  const dispatch = useDispatch();
   return (
     <div className="float-end">
-        <span>(40% of Total)    </span>
-        <BsPlus className="fs-2" />
-        <IoEllipsisVertical className="fs-4" />
+      <FaTrash className="text-danger me-2 mb-1" onClick={() => dispatch(deleteFunction(id))}/>
+      <GreenCheckmark />
+      <IoEllipsisVertical className="fs-4" />
     </div>
 );}
