@@ -2,18 +2,22 @@ import "../../styles.css";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa6";
 import { BsGripVertical } from "react-icons/bs";
-import AssignmentHeaderControlButtons from "./AssignmentHeaderControlButtons";
 import { BsPencilSquare } from "react-icons/bs";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignmentToDelete } from "./reducer";
+import { useDispatch } from "react-redux";
+import AssignmentHeaderControlButtons from "./AssignmentHeaderControlButtons";
 import AssignmentControlButtons from "./AssignmentControlButtons";
+import DeleteAssignmentConfirmation from "./DeleteAssignmentConfirmation";
 
 export default function Assignments() {
   const { cid } = useParams();
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { assignments } = useSelector((state: any) => state.assignmentReducer);
+
   return (
     <div id="wd-assignments" className="m-5">
       <div id="wd-search-assignment-box" className="row">
@@ -78,12 +82,16 @@ export default function Assignments() {
                                 <span>at {assignment.dueTime}</span>} | {assignment.points} pts</span></span>
                             </div>
                             <div className="col-2">
-                              <AssignmentControlButtons id={assignment._id} deleteFunction={deleteAssignment}/>
+                              <AssignmentControlButtons deleteAssignment={() => 
+                                {
+                                  setAssignmentToDelete(assignment);
+                                  dispatch(deleteAssignment())
+                                }}/>
                             </div>
                           </div>
                         </li>
                       )))}
-        {currentUser.role != "FACULTY" &&
+        {currentUser.role !== "FACULTY" &&
           (assignments.filter((assignment : {_id: string,
                                               title: string,
                                               course: string,
