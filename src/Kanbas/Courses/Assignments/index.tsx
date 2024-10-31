@@ -6,15 +6,11 @@ import { BsPencilSquare } from "react-icons/bs";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { deleteAssignment, setAssignmentToDelete } from "./reducer";
-import { useDispatch } from "react-redux";
 import AssignmentHeaderControlButtons from "./AssignmentHeaderControlButtons";
 import AssignmentControlButtons from "./AssignmentControlButtons";
-import DeleteAssignmentConfirmation from "./DeleteAssignmentConfirmation";
 
 export default function Assignments() {
   const { cid } = useParams();
-  const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { assignments } = useSelector((state: any) => state.assignmentReducer);
 
@@ -82,11 +78,7 @@ export default function Assignments() {
                                 <span>at {assignment.dueTime}</span>} | {assignment.points} pts</span></span>
                             </div>
                             <div className="col-2">
-                              <AssignmentControlButtons deleteAssignment={() => 
-                                {
-                                  setAssignmentToDelete(assignment);
-                                  dispatch(deleteAssignment())
-                                }}/>
+                              <AssignmentControlButtons assignment={assignment}/>
                             </div>
                           </div>
                         </li>

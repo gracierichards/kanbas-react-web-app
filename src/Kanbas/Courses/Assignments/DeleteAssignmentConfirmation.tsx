@@ -1,7 +1,9 @@
 import { useSelector } from "react-redux";
-export default function DeleteAssignmentConfirmation({ dialogTitle, deleteAssignment }:
-    { dialogTitle: string; deleteAssignment: () => void}) {
-      const { assignmentToDelete } = useSelector((state: any) => state.assignmentReducer);
+import { deleteAssignment } from "./reducer";
+import { useDispatch } from "react-redux";
+export default function DeleteAssignmentConfirmation({ dialogTitle, assignment }:
+    { dialogTitle: string; assignment : any}) {
+      const dispatch = useDispatch();
       return (
         <div id="wd-delete-assignment-confirmation" className="modal fade" data-bs-backdrop="static" data-bs-keyboard="false">
           <div className="modal-dialog">
@@ -12,12 +14,12 @@ export default function DeleteAssignmentConfirmation({ dialogTitle, deleteAssign
                 <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div className="modal-body">
-                Are you sure you want to delete assignment {assignmentToDelete.title}?
+                Are you sure you want to delete assignment {assignment.title}?
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                   Cancel </button>
-                <button onClick={deleteAssignment} type="button" data-bs-dismiss="modal" className="btn btn-danger">
+                <button onClick={() => dispatch(deleteAssignment(assignment))} type="button" data-bs-dismiss="modal" className="btn btn-danger">
                   Delete </button>
               </div>
             </div>
