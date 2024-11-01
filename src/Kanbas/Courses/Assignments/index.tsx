@@ -9,6 +9,8 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { deleteAssignment } from "./reducer";
 import AssignmentControlButtons from "./AssignmentControlButtons";
+//import { useDispatch } from "react-redux";
+//import DeleteAssignmentConfirmation from "./DeleteAssignmentConfirmation";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -79,6 +81,11 @@ export default function Assignments() {
                             </div>
                             <div className="col-2">
                               <AssignmentControlButtons id={assignment._id} deleteFunction={deleteAssignment}/>
+                              {/*<AssignmentControlButtons deleteAssignment={() => 
+                                {
+                                  setAssignmentToDelete(assignment);
+                                  dispatch(deleteAssignment())
+                                }}/>*/}
                             </div>
                           </div>
                         </li>
