@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { deleteAssignment } from "./reducer";
 import { useDispatch } from "react-redux";
 export default function DeleteAssignmentConfirmation({ dialogTitle, assignment }:
