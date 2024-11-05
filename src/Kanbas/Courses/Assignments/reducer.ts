@@ -26,8 +26,11 @@ const assignmentsSlice = createSlice({
       state.assignments = [...state.assignments, newAssignment] as any;
     },
     deleteAssignment: (state, { payload: assignment }) => {
+      console.log(assignment._id);
+      console.log(state.assignments);
       state.assignments = state.assignments.filter(
         (a: any) => a._id !== assignment._id);
+      console.log(state.assignments);
     },
     updateAssignment: (state, { payload: assignment }) => {
         if (assignment.title.startsWith("@")) {
