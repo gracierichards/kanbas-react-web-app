@@ -21,7 +21,7 @@ export default function DeleteAssignmentConfirmation({ dialogTitle, assignment }
                 <button onClick={() => {console.log(assignment);
                                         dispatch(deleteAssignment(assignment));}} type="button" data-bs-dismiss="modal"
                                         className="btn btn-danger">
-                  Delete </button>
+                  Yes </button>
               </div>
             </div>
           </div>
