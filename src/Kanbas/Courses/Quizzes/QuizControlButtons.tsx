@@ -13,7 +13,7 @@ export default function QuizControlButtons({quiz, cid}: {quiz: any, cid:string})
             <div className="dropdown float-end">
                 <IoEllipsisVertical className="fs-4 dropdown-toggle no-shift" data-bs-toggle="dropdown"/>
                 <ul className="dropdown-menu">
-                <li><a className="dropdown-item me-0" href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>Edit</a></li>
+                <li><a className="dropdown-item me-0" href={`#/Kanbas/Courses/${cid}/Quizzes/edit/${quiz._id}`}>Edit</a></li>
                 <li><button className="dropdown-item me-0" onClick={() => {dispatch(deleteQuiz(quiz))}}>Delete</button></li>
                 <li>{quiz.published && <button className="dropdown-item me-0" onClick={() => {dispatch(unPublish(quiz))}}>Unpublish</button>}
                     {!quiz.published && <button className="dropdown-item me-0" onClick={() => {dispatch(publish(quiz))}}>Publish</button>}</li>

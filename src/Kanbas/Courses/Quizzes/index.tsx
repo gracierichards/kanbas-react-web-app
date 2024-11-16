@@ -23,8 +23,9 @@ export default function Quizzes() {
           <input id="wd-search-quizzes" placeholder="Search..." className="form-control" type="text" style={{width: "500px"}}/>
         </div>
         {currentUser.role === "FACULTY" && <div className="col-4">
-          <button id="wd-add-quizzes" className="btn btn-lg btn-danger me-1 float-end">
-            <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />Quiz</button>
+          <Link to={`/Kanbas/Courses/${cid}/Quizzes/edit/@`}>
+            <button id="wd-add-quizzes" className="btn btn-lg btn-danger me-1 float-end">
+            <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />Quiz</button></Link>
         </div>}
       </div>
       <br/><br/>
@@ -67,7 +68,7 @@ export default function Quizzes() {
                             </div>
                             <div className="col-9">
                               <a className="wd-quiz-link text-decoration-none text-dark"
-                                href={`#/Kanbas/Courses/${cid}/Quiz/${quiz._id}`}>
+                                href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
                               {quiz.title}</a><br />
                               <span className="fs-6 text-wrap">
                               <span className="custom-gray1"><strong>Not available until
@@ -94,7 +95,7 @@ export default function Quizzes() {
                                     description: string,
                                     numQuestions: number,
                                     published: boolean,
-                                    score: number}) => (quiz.course === cid && !quiz.published))
+                                    score: number}) => (quiz.course === cid && quiz.published))
                       .map((quiz : {_id: string,
                                     title: string,
                                     course: string,
@@ -113,8 +114,9 @@ export default function Quizzes() {
                               <RxRocket/>
                             </div>
                             <div className="col-11">
-                              <span className="wd-quiz-link text-decoration-none text-dark">
-                              {quiz.title}</span><br />
+                            <a className="wd-quiz-link text-decoration-none text-dark"
+                                href={`#/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}>
+                              {quiz.title}</a><br />
                               <span className="fs-6 text-wrap">
                               <span className="custom-gray1"><strong>Not available until
                                 </strong> {quiz.dateAvailable} at {quiz.timeAvailable} | <strong>Due
