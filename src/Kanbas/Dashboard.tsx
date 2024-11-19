@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useState } from "react";
-export default function Dashboard({ filteredCourses, allCourses, course, setCourse, addNewCourse,
-    deleteCourse, updateCourse, enroll, unenroll }: {
-      filteredCourses: any[]; allCourses: any[]; course: any; setCourse: (course: any) => void;
-      addNewCourse: () => void; deleteCourse: (courseID: string) => void;
-      updateCourse: () => void; enroll: (courseID: string) => void; unenroll: (courseID: string) => void;}) {
+import { useState, useEffect } from "react";
+import * as userClient from "./Account/client";
+import * as coursesClient from "./Courses/client";
+export default function Dashboard({ course, setCourse, allCourses}: {
+      course: any; setCourse: (course: any) => void; allCourses: any[]}) {
 
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const [showEnrollments, setShowEnrollments] = useState(true);
+  const [filteredCourses, setFilteredCourses] = useState<any[]>([]);
   let visibleCourses : {_id: string,
                         name: string,
                         number: string,
@@ -22,6 +22,53 @@ export default function Dashboard({ filteredCourses, allCourses, course, setCour
     visibleCourses = filteredCourses; 
   } else {
     visibleCourses = allCourses;
+  }
+  const fetchCourses = async () => {
+    try {
+      const courses = await userClient.findMyCourses();
+      setFilteredCourses(courses);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchCourses();
+  }, [currentUser]);
+
+  const updateCourse = async () => {
+    if (course.name.startsWith("@")) {
+      return;
+    }
+    await coursesClient.updateCourse(course);
+    setFilteredCourses(
+      filteredCourses.map((c) => {
+        if (c._id === course._id) {
+          return course;
+        } else {
+          return c;
+        }
+      })
+    );
+  };
+  const addNewCourse = async () => {
+    if (course.name.startsWith("@")) {
+      return;
+    } 
+    const newCourse = await userClient.createCourse(course);
+    setFilteredCourses([...filteredCourses, newCourse]);
+  };
+  const deleteCourse = async (courseId: string) => {
+    const status = await coursesClient.deleteCourse(courseId);
+    setFilteredCourses(filteredCourses.filter((course) => course._id !== courseId));
+  };
+  const enrollInCourse = async (courseId: string) => {
+    console.log("Entered enrollInCourse in Kanbas component. Calling coursesClient.enroll on course id " + courseId);
+    await coursesClient.enroll(courseId, currentUser._id);
+    fetchCourses();
+  }
+  const unenrollInCourse = async (courseId: string) => {
+    await coursesClient.unenroll(courseId, currentUser._id);
+    fetchCourses();
   }
   return (
     <div id="wd-dashboard">
@@ -77,7 +124,7 @@ export default function Dashboard({ filteredCourses, allCourses, course, setCour
                     </button></span>)}
                     {!showEnrollments && filteredCourses.find(temp => temp._id === c._id) && (<button onClick={(event) => {
                       event.preventDefault();
-                      unenroll(c._id);
+                      unenrollInCourse(c._id);
                       }}
                       className="btn btn-danger float-end"
                       id="wd-unenroll-course-click">
@@ -85,7 +132,7 @@ export default function Dashboard({ filteredCourses, allCourses, course, setCour
                     </button>)}
                     {!showEnrollments && !filteredCourses.find(temp => temp._id === c._id) && (<button onClick={(event) => {
                       event.preventDefault();
-                      enroll(c._id);
+                      enrollInCourse(c._id);
                       }}
                       className="btn btn-success float-end"
                       id="wd-enroll-course-click">
