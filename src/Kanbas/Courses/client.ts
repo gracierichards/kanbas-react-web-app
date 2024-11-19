@@ -35,8 +35,8 @@ export const createAssignmentForCourse = async (courseId: string, assignment: an
 };
 export const enroll = async (courseID: string, userID: string) => {
   console.log("Entered courses client enroll function. courseID is " + courseID);
-  console.log("Putting in a put request at URL " + `${ENROLLMENTS_API}/${courseID}`);
-  const response = await axios.put(`${ENROLLMENTS_API}/${courseID}`, userID);
+  console.log("Putting in a put request at URL " + `${ENROLLMENTS_API}/${courseID}/${userID}`);
+  const response = await axios.put(`${ENROLLMENTS_API}/${courseID}/${userID}`);
   return response.data;
 }
 export const unenroll = async (courseID: string, userID: string) => {
