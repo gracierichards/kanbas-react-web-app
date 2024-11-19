@@ -1,15 +1,12 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import { unenroll, enroll } from "./reducer";
-import { useDispatch } from "react-redux";
 export default function Dashboard({ filteredCourses, allCourses, course, setCourse, addNewCourse,
-    deleteCourse, updateCourse }: {
+    deleteCourse, updateCourse, enroll, unenroll }: {
       filteredCourses: any[]; allCourses: any[]; course: any; setCourse: (course: any) => void;
-    addNewCourse: () => void; deleteCourse: (course: any) => void;
-    updateCourse: () => void; }) {
+      addNewCourse: () => void; deleteCourse: (courseID: string) => void;
+      updateCourse: () => void; enroll: (courseID: string) => void; unenroll: (courseID: string) => void;}) {
 
-  const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const [showEnrollments, setShowEnrollments] = useState(true);
   let visibleCourses : {_id: string,
@@ -45,16 +42,7 @@ export default function Dashboard({ filteredCourses, allCourses, course, setCour
       <hr /></div>)}
 
       {currentUser.role === "STUDENT" && <button className="btn btn-primary float-end" id="wd-student-enrollments-click"
-        onClick={() => {setShowEnrollments(!showEnrollments);
-                        if (showEnrollments) {
-                          visibleCourses = filteredCourses; 
-                        } else {
-                          visibleCourses = allCourses;
-                        }
-                        console.log(filteredCourses);
-                        console.log(visibleCourses);
-                        console.log(visibleCourses.map(course => filteredCourses.includes(course)));
-        }} > Enrollments </button>}
+        onClick={() => {setShowEnrollments(!showEnrollments)}} > Enrollments </button>}
 
       <h2 id="wd-dashboard-published">Published Courses ({allCourses.length})</h2> <hr />
       <div id="wd-dashboard-courses" className="row">
@@ -87,17 +75,17 @@ export default function Dashboard({ filteredCourses, allCourses, course, setCour
                       className="btn btn-warning me-2 float-end" >
                       Edit
                     </button></span>)}
-                    {!showEnrollments && filteredCourses.includes(c) && (<button onClick={(event) => {
+                    {!showEnrollments && filteredCourses.find(temp => temp._id === c._id) && (<button onClick={(event) => {
                       event.preventDefault();
-                      dispatch(unenroll({classToUnenroll: c, student: currentUser}));
+                      unenroll(c._id);
                       }}
                       className="btn btn-danger float-end"
                       id="wd-unenroll-course-click">
                       Unenroll
                     </button>)}
-                    {!showEnrollments && !filteredCourses.includes(c) && (<button onClick={(event) => {
+                    {!showEnrollments && !filteredCourses.find(temp => temp._id === c._id) && (<button onClick={(event) => {
                       event.preventDefault();
-                      dispatch(enroll({classToEnroll: c, student: currentUser}));
+                      enroll(c._id);
                       }}
                       className="btn btn-success float-end"
                       id="wd-enroll-course-click">

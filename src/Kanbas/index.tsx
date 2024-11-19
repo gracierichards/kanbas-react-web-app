@@ -16,7 +16,7 @@ export default function Kanbas() {
   const [allCourses, setAllCourses] = useState<any[]>([]);
   const [course, setCourse] = useState<any>({
     _id: "0", name: "New Course", number: "New Number", startDate: "2023-09-10", endDate: "2023-12-15", 
-    image: "/images/reactjs.jpeg", description: "New Description"
+    img: "reactjs.jpeg", description: "New Description"
   });
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const fetchCourses = async () => {
@@ -66,6 +66,15 @@ export default function Kanbas() {
     const status = await coursesClient.deleteCourse(courseId);
     setCourses(courses.filter((course) => course._id !== courseId));
   };
+  const enrollInCourse = async (courseId: string) => {
+    console.log("Entered enrollInCourse in Kanbas component. Calling coursesClient.enroll on course id " + courseId);
+    await coursesClient.enroll(courseId, currentUser._id);
+    fetchCourses();
+  }
+  const unenrollInCourse = async (courseId: string) => {
+    await coursesClient.unenroll(courseId, currentUser._id);
+    fetchCourses();
+  }
   return (
     <Session>
       <div id="wd-kanbas">
@@ -81,7 +90,9 @@ export default function Kanbas() {
                                             setCourse={setCourse}
                                             addNewCourse={addNewCourse}
                                             deleteCourse={deleteCourse}
-                                            updateCourse={updateCourse}/></ProtectedRoute>} />
+                                            updateCourse={updateCourse}
+                                            enroll={enrollInCourse}
+                                            unenroll={unenrollInCourse}/></ProtectedRoute>} />
           <Route path="/Courses/:cid/*" element={<ProtectedRoute><Courses courses={courses} /></ProtectedRoute>} />
           <Route path="/Calendar" element={<h1>Calendar</h1>} />
           <Route path="/Inbox" element={<h1>Inbox</h1>} />
