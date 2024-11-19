@@ -6,13 +6,29 @@ import { BsPencilSquare } from "react-icons/bs";
 import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import AssignmentHeaderControlButtons from "./AssignmentHeaderControlButtons";
 import AssignmentControlButtons from "./AssignmentControlButtons";
+import * as db from "../../Database";
+import * as AssignmentsClient from "./client";
 
 export default function Assignments() {
   const { cid } = useParams();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const { assignments } = useSelector((state: any) => state.assignmentReducer);
+
+  # How to filter
+  const [assignments, setAssignments] = useState<any[]>(db.assignments);
+  const fetchAssignments = async () => {
+    try {
+      const assignments = await AssignmentsClient.fetchAllAssignments();
+      setAssignments(assignments);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchAssignments();
+  }, [currentUser]);
 
   return (
     <div id="wd-assignments" className="m-5">
