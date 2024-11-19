@@ -9,27 +9,26 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AssignmentHeaderControlButtons from "./AssignmentHeaderControlButtons";
 import AssignmentControlButtons from "./AssignmentControlButtons";
-import * as db from "../../Database";
-import * as AssignmentsClient from "./client";
+import * as coursesClient from "../client";
+import { useDispatch } from "react-redux";
+import { setAssignments } from "./reducer";
 
 export default function Assignments() {
+  const dispatch = useDispatch();
   const { cid } = useParams();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-
-  # How to filter
-  const [assignments, setAssignments] = useState<any[]>(db.assignments);
+  const { assignments } = useSelector((state: any) => state.assignmentReducer);
   const fetchAssignments = async () => {
     try {
-      const assignments = await AssignmentsClient.fetchAllAssignments();
-      setAssignments(assignments);
+      const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+      dispatch(setAssignments(assignments));
     } catch (error) {
       console.error(error);
     }
   };
   useEffect(() => {
     fetchAssignments();
-  }, [currentUser]);
-
+  }, []);
   return (
     <div id="wd-assignments" className="m-5">
       <div id="wd-search-assignment-box" className="row">
@@ -58,17 +57,7 @@ export default function Assignments() {
         </li>
         <ul id="wd-assignment-list" className="list-group rounded-0">
         {currentUser.role === "FACULTY" &&
-          (assignments.filter((assignment : {_id: string,
-                                              title: string,
-                                              course: string,
-                                              dateAvailable: string,
-                                              timeAvailable: string,
-                                              dueDate: string,
-                                              dueTime: string,
-                                              points: number,
-                                              description: string}) =>
-                                              (assignment.course === cid))
-                      .map((assignment : {_id: string,
+          (assignments.map((assignment : {_id: string,
                                           title: string,
                                           course: string,
                                           dateAvailable: string,
@@ -100,16 +89,7 @@ export default function Assignments() {
                         </li>
                       )))}
         {currentUser.role !== "FACULTY" &&
-          (assignments.filter((assignment : {_id: string,
-                                              title: string,
-                                              course: string,
-                                              dateAvailable: string,
-                                              timeAvailable: string,
-                                              dueDate: string,
-                                              dueTime: string,
-                                              points: number,
-                                              description: string}) => (assignment.course === cid))
-                      .map((assignment : {_id: string,
+          (assignments.map((assignment : {_id: string,
                                           title: string,
                                           course: string,
                                           dateAvailable: string,

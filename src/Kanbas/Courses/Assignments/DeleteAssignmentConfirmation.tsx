@@ -1,8 +1,13 @@
 import { deleteAssignment } from "./reducer";
 import { useDispatch } from "react-redux";
+import * as assignmentClient from "./client"
 export default function DeleteAssignmentConfirmation({ dialogTitle, assignment }:
     { dialogTitle: string; assignment : any}) {
       const dispatch = useDispatch();
+      const removeAssignment = async (assignment : {_id : string}) => {
+        await assignmentClient.deleteAssignment(assignment._id);
+        dispatch(deleteAssignment(assignment));
+      };    
       return (
         <div id={`wd-delete-assignment-${assignment._id}`} className="modal fade" data-bs-backdrop="static" data-bs-keyboard="false">
           <div className="modal-dialog">
@@ -18,8 +23,7 @@ export default function DeleteAssignmentConfirmation({ dialogTitle, assignment }
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                   Cancel </button>
-                <button onClick={() => {console.log(assignment);
-                                        dispatch(deleteAssignment(assignment));}} type="button" data-bs-dismiss="modal"
+                <button onClick={() => {removeAssignment(assignment)}} type="button" data-bs-dismiss="modal"
                                         className="btn btn-danger">
                   Yes </button>
               </div>

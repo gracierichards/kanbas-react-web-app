@@ -2,6 +2,8 @@ import { useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import {addAssignment, updateAssignment} from "./reducer";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
   const navigate = useNavigate();
@@ -23,7 +25,15 @@ export default function AssignmentEditor() {
       description: ""
     }
   }
-  //const {this_assignment} = useSelector((state: any) => state.assignmentReducer);
+  const createAssignmentForCourse = async () => {
+    if (!cid) return;
+    const newAssignment = await coursesClient.createAssignmentForCourse(cid, this_assignment);
+    dispatch(addAssignment(newAssignment));
+  };
+  const updateAssignmentHandler = async (assignment: any) => {
+    await assignmentsClient.updateAssignment(assignment);
+    dispatch(updateAssignment(assignment));
+  };
   return (
     <div id="wd-assignments-editor">
       <label htmlFor="wd-name" className="form-label"><h6>Assignment Name</h6></label>
@@ -131,9 +141,9 @@ export default function AssignmentEditor() {
       <button className="btn btn-lg btn-danger me-1 float-end"
         onClick={() => {
           if (pathname.includes("/@")) {
-            dispatch(addAssignment(this_assignment));
+            createAssignmentForCourse();
           } else {
-            dispatch(updateAssignment(this_assignment));
+            updateAssignmentHandler(this_assignment);
           }
           navigate(`/Kanbas/Courses/${cid}/Assignments`);
         }}>Save</button>
