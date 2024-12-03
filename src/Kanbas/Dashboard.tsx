@@ -91,6 +91,7 @@ export default function Dashboard({ course, setCourse}: {
     );
   };
   //console.log(JSON.stringify(currentUser));
+  console.log(courses);
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
@@ -117,7 +118,7 @@ export default function Dashboard({ course, setCourse}: {
       <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
-          {courses.map((c) => (
+          {courses.map((c) => c && (
             <div className="wd-dashboard-course col d-flex align-items-stretch" style={{ width: "270px"}}>
               <div className="card rounded-3 overflow-hidden w-100">
                   <Link className="wd-dashboard-course-link text-decoration-none text-dark"
