@@ -61,9 +61,7 @@ export default function Assignments() {
                                           title: string,
                                           course: string,
                                           dateAvailable: string,
-                                          timeAvailable: string,
                                           dueDate: string,
-                                          dueTime: string,
                                           points: number,
                                           description: string}) => (
                         <li className="wd-assignment-list-item list-group-item p-3 ps-1 fs-5">
@@ -78,9 +76,10 @@ export default function Assignments() {
                               {assignment.title}</a><br />
                               <span className="fs-6 text-wrap"><span className="text-danger">Multiple Modules</span>
                               <span className="custom-gray1"> | <strong>Not available until
-                                </strong> {assignment.dateAvailable} at {assignment.timeAvailable} | <strong>Due
-                                </strong> {assignment.dueDate} {assignment.dueTime && 
-                                <span>at {assignment.dueTime}</span>} | {assignment.points} pts</span></span>
+                                </strong> {assignment.dateAvailable && assignment.dateAvailable.substring(0, 10)} at {assignment.dateAvailable
+                                && assignment.dateAvailable.substring(11, 16)} | <strong> Due</strong> {assignment.dueDate
+                                && assignment.dueDate.substring(0, 10)} <span>at {assignment.dueDate &&
+                                assignment.dueDate.substring(11, 16)}</span> | {assignment.points} pts</span></span>
                             </div>
                             <div className="col-2">
                               <AssignmentControlButtons assignment={assignment}/>
@@ -93,9 +92,7 @@ export default function Assignments() {
                                           title: string,
                                           course: string,
                                           dateAvailable: string,
-                                          timeAvailable: string,
                                           dueDate: string,
-                                          dueTime: string,
                                           points: number,
                                           description: string}) => (
                         <li className="wd-assignment-list-item list-group-item p-3 ps-3 fs-5">
@@ -105,9 +102,10 @@ export default function Assignments() {
                               {assignment.title}</span><br />
                               <span className="fs-6 text-wrap"><span className="text-danger">Multiple Modules</span>
                               <span className="custom-gray1"> | <strong>Not available until
-                                </strong> {assignment.dateAvailable} at {assignment.timeAvailable} | <strong>Due
-                                </strong> {assignment.dueDate} {assignment.dueTime && 
-                                <span>at {assignment.dueTime}</span>} | {assignment.points} pts</span></span>
+                              </strong> {assignment.dateAvailable && assignment.dateAvailable.substring(0, 10)} at {assignment.dateAvailable
+                                && assignment.dateAvailable.substring(11, 16)} | <strong> Due</strong> {assignment.dueDate
+                                && assignment.dueDate.substring(0, 10)} <span>at {assignment.dueDate &&
+                                assignment.dueDate.substring(11, 16)}</span> | {assignment.points} pts</span></span>
                             </div>
                           </div>
                         </li>

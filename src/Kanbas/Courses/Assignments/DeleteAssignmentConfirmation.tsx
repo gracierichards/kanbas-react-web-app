@@ -5,7 +5,9 @@ export default function DeleteAssignmentConfirmation({ dialogTitle, assignment }
     { dialogTitle: string; assignment : any}) {
       const dispatch = useDispatch();
       const removeAssignment = async (assignment : {_id : string}) => {
+        console.log("In removeAssignment. Calling assignmentClient.deleteAssignment on id " + assignment._id);
         await assignmentClient.deleteAssignment(assignment._id);
+        console.log("Sucessfully called assignmentClient.deleteAssignment. Now going to call dispatch(deleteAssignment)");
         dispatch(deleteAssignment(assignment));
       };    
       return (
@@ -23,7 +25,8 @@ export default function DeleteAssignmentConfirmation({ dialogTitle, assignment }
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                   Cancel </button>
-                <button onClick={() => {removeAssignment(assignment)}} type="button" data-bs-dismiss="modal"
+                <button onClick={() => {console.log("Calling removeAssignment on " + JSON.stringify(assignment));
+                  removeAssignment(assignment);}} type="button" data-bs-dismiss="modal"
                                         className="btn btn-danger">
                   Yes </button>
               </div>

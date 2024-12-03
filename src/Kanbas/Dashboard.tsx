@@ -3,45 +3,55 @@ import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import * as userClient from "./Account/client";
 import * as coursesClient from "./Courses/client";
-export default function Dashboard({ course, setCourse, allCourses}: {
-      course: any; setCourse: (course: any) => void; allCourses: any[]}) {
+export default function Dashboard({ course, setCourse}: {
+      course: any; setCourse: (course: any) => void}) {
 
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const [showEnrollments, setShowEnrollments] = useState(true);
-  const [filteredCourses, setFilteredCourses] = useState<any[]>([]);
-  let visibleCourses : {_id: string,
-                        name: string,
-                        number: string,
-                        startDate: string,
-                        endDate: string,
-                        department: string,
-                        credits: number,
-                        img: string,
-                        description: string}[];
-  if (showEnrollments) {
-    visibleCourses = filteredCourses; 
-  } else {
-    visibleCourses = allCourses;
-  }
-  const fetchCourses = async () => {
+  const [enrolling, setEnrolling] = useState<boolean>(false);
+  const [courses, setCourses] = useState<any[]>([]);
+  const findCoursesForUser = async () => {
     try {
-      const courses = await userClient.findMyCourses();
-      setFilteredCourses(courses);
+      const courses = await userClient.findCoursesForUser(currentUser._id);
+      setCourses(courses);
     } catch (error) {
       console.error(error);
     }
   };
+  const fetchCourses = async () => {
+    try {
+      const allCourses = await coursesClient.fetchAllCourses();
+      console.log(allCourses);
+      const enrolledCourses = await userClient.findCoursesForUser(
+        currentUser._id
+      );
+      const courses = allCourses.map((course: any) => {
+        if (enrolledCourses.find((c: any) => c._id === course._id)) {
+          return { ...course, enrolled: true };
+        } else {
+          return course;
+        }
+      });
+      setCourses(courses);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    fetchCourses();
-  }, [currentUser]);
+    if (enrolling) {
+      fetchCourses();
+    } else {
+      findCoursesForUser();
+    }
+  }, [currentUser, enrolling]);
 
   const updateCourse = async () => {
     if (course.name.startsWith("@")) {
       return;
     }
     await coursesClient.updateCourse(course);
-    setFilteredCourses(
-      filteredCourses.map((c) => {
+    setCourses(
+      courses.map((c) => {
         if (c._id === course._id) {
           return course;
         } else {
@@ -53,23 +63,34 @@ export default function Dashboard({ course, setCourse, allCourses}: {
   const addNewCourse = async () => {
     if (course.name.startsWith("@")) {
       return;
-    } 
-    const newCourse = await userClient.createCourse(course);
-    setFilteredCourses([...filteredCourses, newCourse]);
+    }
+    const newCourse = await coursesClient.createCourse(course);
+    setCourses([...courses, newCourse]);
   };
   const deleteCourse = async (courseId: string) => {
     const status = await coursesClient.deleteCourse(courseId);
-    setFilteredCourses(filteredCourses.filter((course) => course._id !== courseId));
+    setCourses(courses.filter((course) => course._id !== courseId));
   };
-  const enrollInCourse = async (courseId: string) => {
-    console.log("Entered enrollInCourse in Kanbas component. Calling coursesClient.enroll on course id " + courseId);
-    await coursesClient.enroll(courseId, currentUser._id);
-    fetchCourses();
-  }
-  const unenrollInCourse = async (courseId: string) => {
-    await coursesClient.unenroll(courseId, currentUser._id);
-    fetchCourses();
-  }
+  const updateEnrollment = async (courseId: string, enrolled: boolean) => {
+    console.log("Inside Dashboard.updateEnrollment. courseID is " + courseId + " and enrolled is " + enrolled);
+    if (enrolled) {
+      console.log("Calling userClient.enrollIntoCourse with currentUser._id = " + currentUser._id);
+      await userClient.enrollIntoCourse(currentUser._id, courseId);
+    } else {
+      console.log("Calling userClient.unenrollFromCourse with currentUser._id = " + currentUser._id);
+      await userClient.unenrollFromCourse(currentUser._id, courseId);
+    }
+    setCourses(
+      courses.map((course) => {
+        if (course._id === courseId) {
+          return { ...course, enrolled: enrolled };
+        } else {
+          return course;
+        }
+      })
+    );
+  };
+  //console.log(JSON.stringify(currentUser));
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
@@ -88,24 +109,26 @@ export default function Dashboard({ course, setCourse, allCourses}: {
         onChange={(e) => setCourse({ ...course, description: e.target.value }) }/>
       <hr /></div>)}
 
-      {currentUser.role === "STUDENT" && <button className="btn btn-primary float-end" id="wd-student-enrollments-click"
-        onClick={() => {setShowEnrollments(!showEnrollments)}} > Enrollments </button>}
+      {currentUser.role === "STUDENT" &&
+        <button onClick={() => setEnrolling(!enrolling)} className="float-end btn btn-primary" >
+          {enrolling ? "My Courses" : "All Courses"}
+        </button>}
 
-      <h2 id="wd-dashboard-published">Published Courses ({allCourses.length})</h2> <hr />
+      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
       <div id="wd-dashboard-courses" className="row">
         <div className="row row-cols-1 row-cols-md-5 g-4">
-          {visibleCourses.map((c) => (
+          {courses.map((c) => (
             <div className="wd-dashboard-course col d-flex align-items-stretch" style={{ width: "270px"}}>
               <div className="card rounded-3 overflow-hidden w-100">
                   <Link className="wd-dashboard-course-link text-decoration-none text-dark"
-                    to={filteredCourses.includes(c) ? `/Kanbas/Courses/${c._id}/Home` : "/Kanbas/Dashboard"}>
+                    to={(!c.enrolled && !enrolling) ? `/Kanbas/Courses/${c._id}/Home` : "/Kanbas/Dashboard"}>
                   <img src={`/images/${c.img}`} width="100%" height={150} alt="React logo"/>
                   <div className="card-body">
                     <h5 className="wd-dashboard-course-title card-title">{c.name}</h5>
                     <p className="wd-dashboard-course-title card-text overflow-y-hidden" style={{ maxHeight: 100 }}>
                       {c.description}
                     </p>
-                    {(showEnrollments || filteredCourses.includes(c)) && <button className="btn btn-primary"> Go </button>}
+                    {(!enrolling) && <button className="btn btn-primary"> Go </button>}
                     {currentUser.role === "FACULTY" && (<span><button onClick={(event) => {
                       event.preventDefault();
                       deleteCourse(c._id);
@@ -122,22 +145,16 @@ export default function Dashboard({ course, setCourse, allCourses}: {
                       className="btn btn-warning me-2 float-end" >
                       Edit
                     </button></span>)}
-                    {!showEnrollments && filteredCourses.find(temp => temp._id === c._id) && (<button onClick={(event) => {
-                      event.preventDefault();
-                      unenrollInCourse(c._id);
-                      }}
-                      className="btn btn-danger float-end"
-                      id="wd-unenroll-course-click">
-                      Unenroll
-                    </button>)}
-                    {!showEnrollments && !filteredCourses.find(temp => temp._id === c._id) && (<button onClick={(event) => {
-                      event.preventDefault();
-                      enrollInCourse(c._id);
-                      }}
-                      className="btn btn-success float-end"
-                      id="wd-enroll-course-click">
-                      Enroll
-                    </button>)}
+                    {enrolling && (
+                    <button className={`btn ${ c.enrolled ? "btn-danger" : "btn-success" } float-end`}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        console.log("Inside enroll button onClick. Calling Dashboard.updateEnrollment");
+                        updateEnrollment(c._id, !c.enrolled);
+                      }}>
+                      {c.enrolled ? "Unenroll" : "Enroll"}
+                    </button>
+                  )}
                   </div>
                   </Link>
               </div>

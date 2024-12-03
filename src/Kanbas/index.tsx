@@ -28,6 +28,7 @@ export default function Kanbas() {
   useEffect(() => {
     fetchAllCoursesFunc();
   }, [currentUser]);
+  
   return (
     <Session>
       <div id="wd-kanbas">
@@ -36,7 +37,7 @@ export default function Kanbas() {
         <Routes>
           <Route path="/" element={<Navigate to="/Kanbas/Dashboard" />} />
           <Route path="/Account/*" element={<Account />} />
-          <Route path="/Dashboard" element={<ProtectedRoute><Dashboard course={course} setCourse={setCourse} allCourses={allCourses}/>
+          <Route path="/Dashboard" element={<ProtectedRoute><Dashboard course={course} setCourse={setCourse}/>
             </ProtectedRoute>} />
           <Route path="/Courses/:cid/*" element={<ProtectedRoute><Courses courses={allCourses} /></ProtectedRoute>} />
           <Route path="/Calendar" element={<h1>Calendar</h1>} />

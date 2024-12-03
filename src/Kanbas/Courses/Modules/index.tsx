@@ -18,8 +18,11 @@ export default function Modules() {
   const dispatch = useDispatch();
   const [moduleName, setModuleName] = useState("");
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+
   const fetchModules = async () => {
+    console.log(cid);
     const modules = await coursesClient.findModulesForCourse(cid as string);
+    console.log(modules);
     dispatch(setModules(modules));
   };
   const createModuleForCourse = async () => {

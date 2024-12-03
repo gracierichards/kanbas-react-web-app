@@ -6,12 +6,12 @@ import * as client from "../../Account/client";
 import { FaPencil } from "react-icons/fa6";
 import { FaCheck, FaUserCircle } from "react-icons/fa";
 export default function PeopleDetails() {
-  const { uid} = useParams();
+  const {uid} = useParams();
   const [user, setUser] = useState<any>({});
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
+  const [name, setName] = useState(user.firstName + " " + user.lastName);
+  const [email, setEmail] = useState(user.email);
+  const [role, setRole] = useState(user.role);
 
   const navigate = useNavigate();
   const deleteUser = async (uid: string) => {
@@ -22,6 +22,9 @@ export default function PeopleDetails() {
     if (!uid) return;
     const user = await client.findUserById(uid);
     setUser(user);
+    setName(user.firstName + " " + user.lastName);
+    setEmail(user.email);
+    setRole(user.role);
   };
   useEffect(() => {
     if (uid) fetchUser();
