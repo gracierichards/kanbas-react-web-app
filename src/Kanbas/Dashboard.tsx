@@ -69,7 +69,7 @@ export default function Dashboard({ course, setCourse}: {
   };
   const deleteCourse = async (courseId: string) => {
     const status = await coursesClient.deleteCourse(courseId);
-    setCourses(courses.filter((course) => course._id !== courseId));
+    setCourses(courses.filter((course) => {return course && course._id !== courseId}));
   };
   const updateEnrollment = async (courseId: string, enrolled: boolean) => {
     console.log("Inside Dashboard.updateEnrollment. courseID is " + courseId + " and enrolled is " + enrolled);
